@@ -1,4 +1,4 @@
-# Malaysian Unemployment Rate Analysis and Forecasting (2019–2024)
+# Malaysian Unemployment Rate Analysis and Forecasting (2017–2024)
 
 ## 🎯 Project Objectives
 - Analyze Malaysia’s quarterly unemployment rate trends from Q1 2017 to Q4 2024.
@@ -61,14 +61,3 @@
 ---
 
 ## 📂 Project Files
-📁 malaysian-unemployment-analysis/
-├── data/
-│ ├── Labour_Force_Statistics.xlsx
-│ └──
-├── dashboard/
-│ ├── unemployment_dashboard.pbix
-│ └── uemployment_dashboard_screenshots/
-├── forecasting/
-│ ├── unemployment_forecast.wf1
-│ └── unemplyment_forecast_result.xlsx
-├── README.md
