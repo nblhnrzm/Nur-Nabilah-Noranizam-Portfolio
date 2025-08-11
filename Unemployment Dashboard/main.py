@@ -1,13 +1,21 @@
 import pandas as pd
 import datetime
+import os
+
+# Create directory for unemployment dataset
+dataset_folder = "Unemployment Dataset"
+if not os.path.exists(dataset_folder):
+    os.makedirs(dataset_folder)
+    print(f"Created folder: {dataset_folder}")
 
 # Download unemployment data from World Bank as Excel
 url = "https://api.worldbank.org/v2/en/indicator/SL.UEM.TOTL.ZS?downloadformat=excel"
 df = pd.read_excel(url, sheet_name="Data", skiprows=3)
 
-#Save the raw data as CSV file
-df.to_csv("unemployment_raw_data.csv", index=False)
-print("Successfully downloaded raw data!")
+#Save the raw data as CSV file in the dataset folder
+raw_file_path = os.path.join(dataset_folder, "unemployment_raw_data.csv")
+df.to_csv(raw_file_path, index=False)
+print(f"Successfully downloaded raw data to {raw_file_path} folder")
 
 # Select relevant columns: Country info + years from 2000 onwards
 available_years = [str(year) for year in range(2000, datetime.datetime.now().year) if str(year) in df.columns]
@@ -26,7 +34,9 @@ df_long = df.melt(
 df_long["Year"] = df_long["Year"].astype(int)
 df_long = df_long.dropna()  # Remove rows with missing data
 
-# Save the cleaned long format data
-df_long.to_csv("unemployment_clean_data.csv", index=False)
-print("Data is cleaned and saved successfully!")
+# Save the cleaned long format data in the dataset folder
+clean_file_path = os.path.join(dataset_folder, "unemployment_clean_data.csv")
+df_long.to_csv(clean_file_path, index=False)
+print(f"Data is cleaned and saved successfully to {clean_file_path} folder.")
 
+print(f"\nBoth files are now organized in the '{dataset_folder}' folder")

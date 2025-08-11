@@ -3,8 +3,19 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pycountry_convert as pc
 import pycountry
+import os
 
-df = pd.read_csv("unemployment_clean_data.csv")
+# Read data from the Unemployment Dataset folder
+dataset_folder = "Unemployment Dataset"
+csv_file_path = os.path.join(dataset_folder, "unemployment_clean_data.csv")
+
+# Check if the file exists
+if not os.path.exists(csv_file_path):
+    print(f"Error: {csv_file_path} not found!")
+    print("Please run main.py first to download and prepare the data.")
+    exit()
+
+df = pd.read_csv(csv_file_path)
 
 #Dataset Overview / Basic Info
 print(f"Data loaded successfully! \nDataset Shape: {df.shape}")
@@ -101,18 +112,60 @@ while True:
             else:
                 print(f"Invalid number. Please enter a number between 1 and {len(continents)}.")
         else:
-            # Try to match continent name
-            for continent_name in continents.keys():
-                if selected_input.lower() in continent_name.lower():
-                    selected_continent = continent_name
-                    break
+            # Try to match continent name - handle multiple matches
+            matches = [continent_name for continent_name in continents.keys() 
+                      if selected_input.lower() in continent_name.lower()]
             
-            if selected_continent is None:
+            if len(matches) == 1:
+                selected_continent = matches[0]
+            elif len(matches) > 1:
+                print(f"Multiple regions found containing '{selected_input}'. Please choose:")
+                for i, match in enumerate(matches, 1):
+                    print(f"  {i}. {match}")
+                print("  0. Go back to main category selection")
+                
+                # Get user choice for the specific match
+                while selected_continent is None:
+                    choice = input(f"Enter number (0 to go back, 1-{len(matches)}) or type a more specific region name: ").strip()
+                    
+                    if choice.isdigit():
+                        choice_num = int(choice)
+                        if choice_num == 0:
+                            # Go back to main menu - set flag and break
+                            selected_continent = "GO_BACK"
+                            break
+                        elif 1 <= choice_num <= len(matches):
+                            selected_continent = matches[choice_num - 1]
+                        else:
+                            print(f"Invalid number. Please enter 0 to go back or a number between 1 and {len(matches)}.")
+                    elif choice.lower() in ['back', 'return', 'main']:
+                        # Allow text commands to go back
+                        selected_continent = "GO_BACK"
+                        break
+                    else:
+                        # Try matching again with the new input
+                        new_matches = [match for match in matches if choice.lower() in match.lower()]
+                        if len(new_matches) == 1:
+                            selected_continent = new_matches[0]
+                        elif len(new_matches) > 1:
+                            print("Still multiple matches. Please be more specific:")
+                            for i, match in enumerate(new_matches, 1):
+                                print(f"  {i}. {match}")
+                        else:
+                            print("No match found. Please try again:")
+                            for i, match in enumerate(matches, 1):
+                                print(f"  {i}. {match}")
+            else:
                 print("Region not found. Please try again.")
                 print("Available options:")
                 for i, (continent_name, countries) in enumerate(continents.items(), 1):
                     print(f"{i}. {continent_name}")
 
+    # Check if user chose to go back during multiple match selection
+    if selected_continent == "GO_BACK":
+        print("\nGoing back to main category selection...")
+        continue  # This will show the full category list again at the start of the loop
+        
     # Process user selection
     continent_countries = continents[selected_continent]
     if not continent_countries:
@@ -182,7 +235,7 @@ while True:
             chart_title = f"Unemployment Rate Over Time - {selected_country}"
             filename = f"unemployment_trend_{selected_country.replace(' ', '_').replace(',', '').replace('.', '')}.png"
         
-        break  # Exit the main loop to generate chart
+        break
 
 
 #Line Chart of unemployment over time
@@ -194,3 +247,11 @@ plt.ylabel("Unemployment Rate (%)")
 plt.grid(True)
 plt.savefig(filename, dpi=300)
 plt.show()
+
+highest = df.loc[df["Unemployment_Rate"].idxmax()]
+print(f"\nHighest unemployment rate recorded is {highest['Unemployment_Rate']}% in {highest['Year']} for {highest['Country Name']}")
+
+lowest = df.loc[df["Unemployment_Rate"].idxmin()]
+print(f"Lowest unemployment rate recorded is {lowest['Unemployment_Rate']}% in {lowest['Year']} for {lowest['Country Name']}")
+
+
