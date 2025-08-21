@@ -28,6 +28,7 @@ Malaysia Unemployment Dashboard/
 ├── download.py     # Downloads data from OpenDOSM API
 ├── cleaning.py     # Cleans and organizes the data
 ├── README.md       # Project info
+├── requirements.txt # Python dependencies
 ├── virt/           # Python virtual environment
 ├── Dataset/
 │   ├── Monthly/
@@ -45,11 +46,42 @@ Malaysia Unemployment Dashboard/
 
 
 ## How to Use
+
+### Prerequisites
+- Python 3.7 or newer
+- Internet connection (required for data download)
+
+### Setup Instructions
+1. **Clone or download the repository**
+   ```bash
+   git clone https://github.com/nblhnrzm/Nur-Nabilah-Noranizam-Portfolio.git
+   cd "Nur-Nabilah-Noranizam-Portfolio/Malaysia Unemployment Dashboard"
+   ```
+
+2. **Create and activate virtual environment**
+   ```bash
+   # Create virtual environment
+   python -m venv virt
+   
+   # Activate virtual environment
+   # For Windows:
+   virt\Scripts\activate
+   # For Mac/Linux:
+   source virt/bin/activate
+   ```
+
+3. **Install required packages**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+### Running the Project
 1. **Download and clean the data**
-   ```powershell
+   ```bash
    python main.py
    ```
    - This will create folders, download all datasets, clean the data, and give you a summary.
+
 2. **Analyze in Power BI**
    - Open Power BI Desktop
    - Import the cleaned CSV files from `Dataset/*/Cleaned/`
