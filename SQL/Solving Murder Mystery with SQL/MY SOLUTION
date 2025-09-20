@@ -1,0 +1,95 @@
+--Crime Type: MURDER
+--Date: 20180115
+--Location: SQL City
+
+--Looking at the crime report for clues
+select * from crime_scene_report
+where city = "SQL City"
+and type = "murder"
+and date = "20180115";
+
+--Description: Security footage shows that there were 2 witnesses.
+--The first witness lives at the last house on "Northwestern Dr".
+--The second witness, named Annabel, lives somewhere on "Franklin Ave".
+select * from person;
+
+--Identifying the first witness
+select * from person
+where address_street_name = "Northwestern Dr"
+ORDER BY address_number DESC;
+--ID 14887, Morty Schapiro, License 118009
+
+--Identifying the second witness
+select * from person
+where name LIKE "Annabel %"
+and address_street_name = "Franklin Ave";
+-- ID 16371, Annabel Miller, License 490173
+
+select * from interview;
+--Looking at witnesses interview
+select * from interview
+where person_id = 14887
+or person_id = 16371;
+
+--First witness transcript
+--I heard a gunshot and then saw a man run out.
+--He had a "Get Fit Now Gym" bag. The membership number on the bag started with "48Z". Only gold members have those bags.
+--The man got into a car with a plate that included "H42W".
+
+--Second withness transcript
+--I saw the murder happen, and I recognized the killer from my gym when I was working out last week on January the 9th.
+
+select * from get_fit_now_member;
+select * from get_fit_now_check_in;
+select * from drivers_license;
+
+--Identifying the killer
+select get_fit_now_member.name, person.id from get_fit_now_member
+join get_fit_now_check_in
+on get_fit_now_member.id = get_fit_now_check_in.membership_id
+join person
+on get_fit_now_member.person_id = person.id
+join drivers_license
+on drivers_license.id = person.license_id
+where membership_id LIKE "48Z%"
+and membership_status = "gold"
+and plate_number LIKE "%H42W%";
+
+--Killer: Jeremy Bowers, ID 67318
+--Testing if the solution is correct
+INSERT INTO solution VALUES (1, "Jeremy Bowers");
+SELECT value FROM solution;
+--Congrats, you found the murderer! But wait, there's more...
+--If you think you're up for a challenge, try querying the interview transcript of the murderer to find the real villain
+--behind this crime.
+--If you feel especially confident in your SQL skills, try to complete this final step with no more than 2 queries.
+--Use this same INSERT statement with your new suspect to check your answer.
+
+--Looking at his confession
+select * from interview
+where person_id = 67318;
+--I was hired by a woman with a lot of money.
+--I don't know her name but I know she's around 5'5" (65") or 5'7" (67").
+--She has red hair and she drives a Tesla Model S.
+--I know that she attended the SQL Symphony Concert 3 times in December 2017.
+
+--Identify which table to use
+--drivers_license .gender, .hair_color, .height, .car_make, .car_model
+--facebook_event_checkin .event_name, .date
+--join person id to license then to the fb event
+--only shows name
+
+select person.name from person
+join drivers_license
+on person.license_id = drivers_license.id
+join facebook_event_checkin
+on facebook_event_checkin.person_id = person.id
+where date LIKE "201712%"
+and event_name LIKE "%Symphony Concert%"
+and gender = "female" 
+and hair_color = "red"
+and car_make = "Tesla";
+
+--Checking the solution for the real mastermind
+INSERT INTO solution VALUES (1, "Miranda Priestly");
+SELECT value FROM solution;
